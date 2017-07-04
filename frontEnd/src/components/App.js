@@ -1,13 +1,19 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as actionCreators from '../redux/actions/actionCreators';
-import Main from './Main';
+import Main from './Main.jsx';
 
 
 function mapStateToProps(state) {
   return {
-    posts: state.posts,
-    comments: state.comments
+    requestMovies: {
+      isFetching: state.isFetching,
+      error: state.error
+    },
+    receiveMovies: {
+      SingleMovie: state.SingleMovie,
+      movies: state.movies,
+    },
   }
 };
 

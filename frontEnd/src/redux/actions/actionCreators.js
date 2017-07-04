@@ -15,7 +15,7 @@ export function requestSingleMovieFromAPI() {
 // Got movies from general search
 export function receiveMovies(moviesArray) {
   return {
-    type: RECEIVE_MOVIES,
+    type: 'RECEIVE_MOVIES',
     movies: moviesArray,
   };
 }
@@ -23,14 +23,8 @@ export function receiveMovies(moviesArray) {
 // Got movie from pointed search
 export function receiveSingleMovie(singleMovie) {
   return {
-    type: RECEIVE_SINGLE_MOVIE,
-    title: singleMovie.Title,
-    year: singleMovie.Year,
-    genre: singleMovie.Genre,
-    director: singleMovie.Director,
-    country: singleMovie.Country,
-    imdbID: singleMovie.imdbID,
-    poster: singleMovie.Poster
+    type: 'RECEIVE_SINGLE_MOVIE',
+    singleMovie
   };
 }
 
@@ -80,3 +74,13 @@ export function fetchSingleMovie(singleMovie) {
       .catch(err => dispatch(failedToFetch(err)));
   };
 }
+
+/*
+title: singleMovie.Title,
+year: singleMovie.Year,
+genre: singleMovie.Genre,
+director: singleMovie.Director,
+country: singleMovie.Country,
+imdbID: singleMovie.imdbID,
+poster: singleMovie.Poster
+*/

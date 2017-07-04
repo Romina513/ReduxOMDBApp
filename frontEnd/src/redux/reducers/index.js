@@ -2,8 +2,9 @@ import { combineReducers } from 'redux';
 import { routerReducer } from 'react-router-redux';
 
 // Import individual reducers
-import nameOfMyReducer from './NameOfFileOfMyReducer';
-import comments from './comments';
+import { requestMovies, receiveMovies } from './getMovies';
 
 
-const rootReducer = combineReducers({posts, comments, routing: routerReducer});
+const rootReducer = combineReducers({requestMovies, receiveMovies, routing: routerReducer});
+
+export default rootReducer;

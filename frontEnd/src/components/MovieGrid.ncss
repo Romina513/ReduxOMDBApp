@@ -1,0 +1,8 @@
+@font-face {
+  font-family: BeautySchoolDropout;
+  src: url(../assets/beautysc.ttf);
+}
+
+h1 {
+  font-family: BeautySchoolDropout;
+}

@@ -1,5 +1,7 @@
 import React from 'react';
 
+//require('./MovieGrid.ncss');
+
 
 const MovieGrid = React.createClass({
   render() {
