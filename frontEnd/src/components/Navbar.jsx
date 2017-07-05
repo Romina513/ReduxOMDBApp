@@ -3,14 +3,14 @@ import ReactDOM from 'react-dom';
 
 import { Link } from 'react-router';
 
-require('./Navbar.ncss');
+var s = require('./Navbar.ncss');
 
 
 
 class Navbar extends React.Component {
   render() {
     return (
-      <div className="navbar">
+      <div className={s.navbar}>
 
         <ul>
           <li><Link to="/">Movie DB</Link></li>

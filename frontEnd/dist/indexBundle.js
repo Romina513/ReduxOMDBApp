@@ -15219,6 +15219,10 @@ var _App = __webpack_require__(293);
 
 var _App2 = _interopRequireDefault(_App);
 
+var _Home = __webpack_require__(305);
+
+var _Home2 = _interopRequireDefault(_Home);
+
 var _MovieGrid = __webpack_require__(300);
 
 var _MovieGrid2 = _interopRequireDefault(_MovieGrid);
@@ -15232,41 +15236,25 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // *Note: Need .jsx extension, because the default is .js, so it will look for .js files, not .jsx by default
 
 
+//or you can import { render } from 'react-dom' and would not need to write ReactDOM.render below, but would just write render()
+
 var router = _react2.default.createElement(
   _reactRedux.Provider,
   { store: _store2.default },
   _react2.default.createElement(
     _reactRouter.Router,
-    { history: _reactRouter.hashHistory },
+    { history: _store.history },
     _react2.default.createElement(
       _reactRouter.Route,
       { path: '/', component: _App2.default },
-      _react2.default.createElement(_reactRouter.IndexRoute, { component: _MovieGrid2.default }),
+      _react2.default.createElement(_reactRouter.IndexRoute, { component: _Home2.default }),
+      _react2.default.createElement(_reactRouter.Route, { path: '/searchresults', component: _MovieGrid2.default }),
       _react2.default.createElement(_reactRouter.Route, { path: '/view/:postId', component: _SingleMovie2.default })
     )
   )
 );
 
-// * Import Components here later
-
-//import { Provider } from 'react-redux';
-
-//{ render } from 'react-dom'
-
 _reactDom2.default.render(router, document.getElementById('app'));
-
-/*
-
-const React = require('react');
-const ReactDOM = require('react-dom');
-
-
-ReactDOM.render((
-  <div>
-    HELLO
-  </div>
-), document.getElementById('app'));
-*/
 
 /***/ }),
 /* 137 */
@@ -29937,6 +29925,7 @@ function verifySubselectors(mapStateToProps, mapDispatchToProps, mergeProps, dis
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.history = undefined;
 
 var _reduxThunk = __webpack_require__(287);
 
@@ -29945,6 +29934,10 @@ var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 var _reduxLogger = __webpack_require__(288);
 
 var _redux = __webpack_require__(45);
+
+var _reactRouterRedux = __webpack_require__(290);
+
+var _reactRouter = __webpack_require__(64);
 
 var _index = __webpack_require__(289);
 
@@ -29969,6 +29962,8 @@ var InitialState = {
 var composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || _redux.compose;
 var store = (0, _redux.createStore)(_index2.default, InitialState, composeEnhancers((0, _redux.applyMiddleware)(_reduxThunk2.default, // lets us dispatch() functions
 loggerMiddleware)));
+
+var history = exports.history = (0, _reactRouterRedux.syncHistoryWithStore)(_reactRouter.hashHistory, store);
 
 exports.default = store;
 
@@ -30345,14 +30340,10 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function mapStateToProps(state) {
   return {
-    requestMovies: {
-      isFetching: state.isFetching,
-      error: state.error
-    },
-    receiveMovies: {
-      SingleMovie: state.SingleMovie,
-      movies: state.movies
-    }
+    isFetching: state.requestMovies.isFetching,
+    error: state.requestMovies.error,
+    movies: state.receiveMovies.movies,
+    SingleMovie: state.receiveMovies.SingleMovie
   };
 };
 
@@ -30377,7 +30368,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.requestMoviesFromAPI = requestMoviesFromAPI;
-exports.requestSingleMovieFromAPI = requestSingleMovieFromAPI;
+exports.movieReceivedFromAPI = movieReceivedFromAPI;
 exports.receiveMovies = receiveMovies;
 exports.receiveSingleMovie = receiveSingleMovie;
 exports.failedToFetch = failedToFetch;
@@ -30391,9 +30382,9 @@ function requestMoviesFromAPI() {
 }
 
 // Gets single movie from API
-function requestSingleMovieFromAPI() {
+function movieReceivedFromAPI() {
   return {
-    type: 'REQUEST_SINGLE_MOVIE_FROM_API'
+    type: 'MOVIE_RECEIVED_FROM_API'
   };
 }
 
@@ -30441,7 +30432,8 @@ function fetchMovie(inputFromSearchField) {
     return fetch('http://omdbapi.com/?apikey=20dac387&s=' + inputFromSearchField).then(function (response) {
       return response.json();
     }).then(function (data) {
-      return dispatch(receiveMovies(data.Search));
+      dispatch(receiveMovies(data.Search));
+      dispatch(movieReceivedFromAPI());
     }) // data.Search, because what I get back from API is an object with a "Search:" property with a value of an array of abjects (that are the individual movies)
     .catch(function (err) {
       return dispatch(failedToFetch(err));
@@ -30455,12 +30447,13 @@ function fetchMovie(inputFromSearchField) {
 function fetchSingleMovie(singleMovie) {
 
   return function (dispatch) {
-    dispatch(requestSingleMovieFromAPI());
+    dispatch(requestMoviesFromAPI());
 
     return fetch('http://omdbapi.com/?apikey=20dac387&t=' + singleMovie).then(function (response) {
       return response.json();
     }).then(function (data) {
-      return dispatch(receiveSingleMovie(data));
+      dispatch(receiveSingleMovie(data));
+      dispatch(movieReceivedFromAPI());
     }).catch(function (err) {
       return dispatch(failedToFetch(err));
     });
@@ -30498,9 +30491,9 @@ var _Navbar = __webpack_require__(296);
 
 var _Navbar2 = _interopRequireDefault(_Navbar);
 
-var _SearchBar = __webpack_require__(299);
+var _Search = __webpack_require__(303);
 
-var _SearchBar2 = _interopRequireDefault(_SearchBar);
+var _Search2 = _interopRequireDefault(_Search);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30511,7 +30504,7 @@ var Main = _react2.default.createClass({
       'div',
       null,
       _react2.default.createElement(_Navbar2.default, null),
-      _react2.default.createElement(_SearchBar2.default, null),
+      _react2.default.createElement(_Search2.default, this.props),
       _react2.default.cloneElement(this.props.children, this.props)
     );
   }
@@ -30550,7 +30543,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-__webpack_require__(297);
+var s = __webpack_require__(297);
 
 var Navbar = function (_React$Component) {
   _inherits(Navbar, _React$Component);
@@ -30566,7 +30559,7 @@ var Navbar = function (_React$Component) {
     value: function render() {
       return _react2.default.createElement(
         'div',
-        { className: 'navbar' },
+        { className: s.navbar },
         _react2.default.createElement(
           'ul',
           null,
@@ -30629,10 +30622,12 @@ exports = module.exports = __webpack_require__(110)();
 
 
 // module
-exports.push([module.i, "ul {\n    list-style-type: none;\n    margin: 0;\n    padding: 0;\n    background-color: rgb(120,130,134);\n}\n\nli {\n    display: inline;\n    padding: 10px;\n}\n", ""]);
+exports.push([module.i, "ul {\n    list-style-type: none;\n    margin: 0;\n    padding: 20px;\n    overflow: hidden;\n\n}\n\nli {\n    display: inline;\n    padding: 20px 15px;\n    color: #f2f2f2;\n    text-align: center;\n    font-size: 17px;\n}\n\n.Navbar__navbar___3dF-8 {\n  color: red;\n  background-color: red;\n}\n", ""]);
 
 // exports
-
+exports.locals = {
+	"navbar": "Navbar__navbar___3dF-8"
+};
 
 /***/ }),
 /* 299 */
@@ -30653,6 +30648,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var SearchBar = _react2.default.createClass({
   displayName: "SearchBar",
+  getInput: function getInput(e) {
+    e.preventDefault();
+    console.log(this.refs.input.value);
+    this.props.fetch(this.refs.input.value);
+  },
   render: function render() {
     return _react2.default.createElement(
       "div",
@@ -30660,8 +30660,8 @@ var SearchBar = _react2.default.createClass({
       _react2.default.createElement(
         "form",
         null,
-        _react2.default.createElement("input", { type: "text" }),
-        _react2.default.createElement("input", { type: "submit", value: "Submit" })
+        _react2.default.createElement("input", { type: "text", placeholder: "Search for a movie", ref: "input" }),
+        _react2.default.createElement("input", { type: "submit", value: "Submit", onClick: this.getInput })
       )
     );
   }
@@ -30684,27 +30684,50 @@ var _react = __webpack_require__(7);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _Movie = __webpack_require__(304);
+
+var _Movie2 = _interopRequireDefault(_Movie);
+
+__webpack_require__(306);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-//require('./MovieGrid.ncss');
-
-
 var MovieGrid = _react2.default.createClass({
-  displayName: "MovieGrid",
+  displayName: 'MovieGrid',
   render: function render() {
-    return _react2.default.createElement(
-      "div",
-      { className: "movie-grid" },
-      _react2.default.createElement(
-        "h1",
+    if (this.props.isFetching == true) {
+      return _react2.default.createElement(
+        'p',
         null,
-        "WELCOME TO YOUR MOVIE DATABASE (This is MovieGrid Component)"
-      )
+        'Working on it...'
+      );
+    }
+    return _react2.default.createElement(
+      'div',
+      { className: 'movie-grid' },
+      this.props.movies.map(function (movie, i) {
+        return _react2.default.createElement(_Movie2.default, { key: movie.imdbID + i, movie: movie });
+      })
     );
   }
 });
 
 exports.default = MovieGrid;
+
+/*
+Note:
+this.props.receiveMovies.movies
+.receiveMovies.movies is value in store state available through props
+Using map method on movies array
+That returns a new array of <Movie/> components
+
+Changed this:
+if (this.props.movies == undefined) {
+  return (
+    <p>Working on it...</p>
+  )
+}
+*/
 
 /***/ }),
 /* 301 */
@@ -30736,6 +30759,65 @@ var SingleMovie = _react2.default.createClass({
 
 exports.default = SingleMovie;
 
+/*
+title: singleMovie.Title,
+year: singleMovie.Year,
+genre: singleMovie.Genre,
+director: singleMovie.Director,
+country: singleMovie.Country,
+imdbID: singleMovie.imdbID,
+poster: singleMovie.Poster
+
+const Movie = React.createClass({
+  render() {
+    return (
+      <div className="movie-thumbnail">
+        <Link to={`/view/${this.props.movie.imdbID}`}>
+          <h3>{this.props.movie.Title}</h3>
+          <p>{this.props.movie.Year}</p>
+          <img src={this.props.movie.Poster} />
+        </Link>
+      </div>
+    )
+  }
+});
+
+
+export default MovieGrid;
+
+const Search = React.createClass({
+  fetch: function(input) {
+    this.props.fetchMovie(input)
+    history.push('/searchresults');
+  },
+  render() {
+    return (
+      <div className="search">
+        <SearchBar fetch={this.fetch} />
+      </div>
+    )
+  }
+});
+
+const SearchBar = React.createClass({
+  getInput(e) {
+    e.preventDefault();
+    console.log(this.refs.input.value);
+    this.props.fetch(this.refs.input.value)
+  },
+  render() {
+    return (
+      <div className="search-bar">
+        <form>
+          <input type="text" placeholder="Search for a movie" ref="input" />
+          <input type="submit" value="Submit" onClick={this.getInput} />
+        </form>
+      </div>
+    )
+  }
+});
+*/
+
 /***/ }),
 /* 302 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -30751,13 +30833,13 @@ exports.receiveMovies = receiveMovies;
 function requestMovies() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var action = arguments[1];
-
+  // state={} (This is the preloaded state) (giving the state a "form", in case it's undefined)
   switch (action.type) {
     case 'REQUEST_MOVIES_FROM_API':
       //return the new state
       return Object.assign({}, state, { isFetching: true });
-    case 'REQUEST_SINGLE_MOVIE_FROM_API':
-      return Object.assign({}, state, { isFetching: true });
+    case 'MOVIE_RECEIVED_FROM_API':
+      return Object.assign({}, state, { isFetching: false });
     case 'FAILED_TO_FETCH':
       return Object.assign({}, state, {
         isFetching: false,
@@ -30776,12 +30858,10 @@ function receiveMovies() {
   switch (action.type) {
     case 'RECEIVE_MOVIES':
       return Object.assign({}, state, {
-        isFetching: false,
         movies: action.movies
       });
     case 'RECEIVE_SINGLE_MOVIE':
       return Object.assign({}, state, {
-        isFetching: false,
         singleMovie: action.singleMovie
       });
     default:
@@ -30789,6 +30869,171 @@ function receiveMovies() {
   }
   return state;
 }
+
+/***/ }),
+/* 303 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(7);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _store = __webpack_require__(286);
+
+var _SearchBar = __webpack_require__(299);
+
+var _SearchBar2 = _interopRequireDefault(_SearchBar);
+
+var _MovieGrid = __webpack_require__(300);
+
+var _MovieGrid2 = _interopRequireDefault(_MovieGrid);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Search = _react2.default.createClass({
+  displayName: 'Search',
+
+  fetch: function fetch(input) {
+    this.props.fetchMovie(input);
+    _store.history.push('/searchresults');
+  },
+  render: function render() {
+    return _react2.default.createElement(
+      'div',
+      { className: 'search' },
+      _react2.default.createElement(_SearchBar2.default, { fetch: this.fetch })
+    );
+  }
+});
+
+exports.default = Search;
+
+/***/ }),
+/* 304 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(7);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouter = __webpack_require__(64);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Movie = _react2.default.createClass({
+  displayName: 'Movie',
+  render: function render() {
+    return _react2.default.createElement(
+      'div',
+      { className: 'movie-thumbnail' },
+      _react2.default.createElement(
+        _reactRouter.Link,
+        { to: '/view/' + this.props.movie.imdbID },
+        _react2.default.createElement(
+          'h3',
+          null,
+          this.props.movie.Title
+        ),
+        _react2.default.createElement(
+          'p',
+          null,
+          this.props.movie.Year
+        ),
+        _react2.default.createElement('img', { src: this.props.movie.Poster })
+      )
+    );
+  }
+});
+
+exports.default = Movie;
+
+/***/ }),
+/* 305 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(7);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Home = _react2.default.createClass({
+  displayName: "Home",
+  render: function render() {
+    return _react2.default.createElement(
+      "div",
+      { className: "home" },
+      _react2.default.createElement("img", { src: "../src/assets/film_reel.png" })
+    );
+  }
+});
+
+exports.default = Home;
+
+/*
+Now path to image is from index html, b/c image was not loading otherwise  
+*/
+
+/***/ }),
+/* 306 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(307);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(111)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../node_modules/css-loader/index.js?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!./MovieGrid.ncss", function() {
+			var newContent = require("!!../../node_modules/css-loader/index.js?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!./MovieGrid.ncss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 307 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(110)();
+// imports
+
+
+// module
+exports.push([module.i, "div {\n  border: solid;\n}\n", ""]);
+
+// exports
+
 
 /***/ })
 /******/ ]);

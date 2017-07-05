@@ -6,14 +6,10 @@ import Main from './Main.jsx';
 
 function mapStateToProps(state) {
   return {
-    requestMovies: {
-      isFetching: state.isFetching,
-      error: state.error
-    },
-    receiveMovies: {
-      SingleMovie: state.SingleMovie,
-      movies: state.movies,
-    },
+    isFetching: state.requestMovies.isFetching,
+    error: state.requestMovies.error,
+    movies: state.receiveMovies.movies,
+    SingleMovie: state.receiveMovies.SingleMovie
   }
 };
 

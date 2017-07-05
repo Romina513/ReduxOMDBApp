@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 
 import Navbar from './Navbar.jsx';
-import SearchBar from './SearchBar.jsx';
+import Search from '../containers/Search.jsx';
 
 
 const Main = React.createClass({
@@ -10,7 +10,7 @@ const Main = React.createClass({
     return (
       <div>
         <Navbar />
-        <SearchBar />
+        <Search { ...this.props} />
         {React.cloneElement(this.props.children, this.props)}
       </div>
     )

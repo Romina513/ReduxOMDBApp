@@ -1,6 +1,10 @@
 import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 import { createStore, applyMiddleware, compose } from 'redux';
+
+import { syncHistoryWithStore } from 'react-router-redux';
+import { hashHistory } from 'react-router';
+
 import rootReducer from './reducers/index';
 
 const loggerMiddleware = createLogger();
@@ -23,5 +27,6 @@ const store = createStore(rootReducer, InitialState, composeEnhancers(
     loggerMiddleware,
     )));
 
+export const history = syncHistoryWithStore(hashHistory, store);
 
 export default store;

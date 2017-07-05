@@ -6,9 +6,9 @@ export function requestMoviesFromAPI() {
 }
 
 // Gets single movie from API
-export function requestSingleMovieFromAPI() {
+export function movieReceivedFromAPI() {
   return {
-    type: 'REQUEST_SINGLE_MOVIE_FROM_API'
+    type: 'MOVIE_RECEIVED_FROM_API'
   }
 }
 
@@ -55,7 +55,10 @@ export function fetchMovie(inputFromSearchField) {
 
     return fetch(`http://omdbapi.com/?apikey=20dac387&s=${inputFromSearchField}`)
       .then(response => response.json())
-      .then(data => dispatch(receiveMovies(data.Search))) // data.Search, because what I get back from API is an object with a "Search:" property with a value of an array of abjects (that are the individual movies)
+      .then(data => {
+        dispatch(receiveMovies(data.Search));
+        dispatch(movieReceivedFromAPI());
+      }) // data.Search, because what I get back from API is an object with a "Search:" property with a value of an array of abjects (that are the individual movies)
       .catch(err => dispatch(failedToFetch(err)));
       // In a real world app, you also want to
       // catch any error in the network call.
@@ -66,11 +69,14 @@ export function fetchMovie(inputFromSearchField) {
 export function fetchSingleMovie(singleMovie) {
 
   return (dispatch) => {
-    dispatch(requestSingleMovieFromAPI());
+    dispatch(requestMoviesFromAPI());
 
     return fetch(`http://omdbapi.com/?apikey=20dac387&t=${singleMovie}`)
       .then(response => response.json())
-      .then(data => dispatch(receiveSingleMovie(data)))
+      .then(data => {
+        dispatch(receiveSingleMovie(data));
+        dispatch(movieReceivedFromAPI());
+      })
       .catch(err => dispatch(failedToFetch(err)));
   };
 }
