@@ -7,9 +7,8 @@ var bodyParser = require('body-parser');
 
 // Added these modules
 var passport = require('passport');
-var LocalStrategy = require('passport-local');
 var mongoose = require('mongoose');
-var expressSession = require('express-session');
+// var expressSession = require('express-session');
 var passportConfig = require('./config/passportConfig.js');
 var User = require('./models/users');
 
@@ -32,6 +31,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+passportConfig(app);
 
 app.use('/', index);
 app.use('/users', users);

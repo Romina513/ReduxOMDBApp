@@ -1,11 +1,13 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var passportLocalMongoose = require('passport-local-mongoose');
-var favorites = require('./Favorites');
+var favorites = require('./favorites');
 
 var UserSchema = new Schema({
+  // username: { type: String, required: true },
+  // password: { type: String, required: true },
   favorites: [{
-    type: mongoose.Schema. Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'favorites'
   }]
 });

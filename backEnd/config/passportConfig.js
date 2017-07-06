@@ -1,10 +1,12 @@
 var passport = require('passport');
 var expressSession = require('express-session');
+var LocalStrategy = require('passport-local'); //var LocalStrategy = require('passport-local').Strategy;
 var User = require('../models/users.js');
+
 
 function configurePassport(app) {
   app.use(expressSession({
-    secret: 'string secreta',
+    secret: 'secret string',
     resave: false,
     saveUninitialized: false,
   }));
