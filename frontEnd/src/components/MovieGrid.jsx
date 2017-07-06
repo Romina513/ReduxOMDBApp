@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 import Movie from './Movie.jsx'
 
 import './MovieGrid.ncss';

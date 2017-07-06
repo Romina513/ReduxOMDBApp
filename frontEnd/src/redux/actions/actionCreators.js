@@ -36,6 +36,34 @@ export function failedToFetch(err) {
   };
 }
 
+// Create/Register user
+export function registerUser() {
+  return {
+    type: 'REGISTER_USER',
+  };
+}
+
+// Succesful rgistration
+export function userIsRegistered() {
+  return {
+    type: 'USER_IS_REGISTERED',
+  };
+}
+
+export function failedPost(err) {
+  return {
+    type: 'FAILED_POST',
+    err
+  };
+}
+
+export function userFailToRegister(err) {
+  return {
+    type: 'USER_FAILED_TO_REGISTER',
+    err
+  }
+}
+
 // Function to fetch all movies corresponding to words in search input field
 export function fetchMovie(inputFromSearchField) {
   // Thunk middleware knows how to handle functions.
@@ -81,12 +109,28 @@ export function fetchSingleMovie(singleMovie) {
   };
 }
 
-/*
-title: singleMovie.Title,
-year: singleMovie.Year,
-genre: singleMovie.Genre,
-director: singleMovie.Director,
-country: singleMovie.Country,
-imdbID: singleMovie.imdbID,
-poster: singleMovie.Poster
-*/
+// Function to post user registration data to server
+export function postRegistration(userData) {
+
+  return (dispatch) => {
+    dispatch(registerUser());
+
+    return fetch('http://localhost:3000/users/register', {
+      method: 'POST',
+      headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+      body: JSON.stringify(userData)
+    })
+      .then(response => response.json())
+      .then(data => {
+        if(data.register) {
+          dispatch(userIsRegistered(data))
+        } else {
+          dispatch(userFailToRegister(data.err))
+        }
+      })
+      .catch(err => dispatch(failedPost(err)))
+  };
+};

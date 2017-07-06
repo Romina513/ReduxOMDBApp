@@ -29955,6 +29955,11 @@ var InitialState = {
   receiveMovies: {
     SingleMovie: {},
     movies: []
+  },
+  authentication: {
+    isPostingToServer: false,
+    register: false,
+    error: null
   }
 };
 
@@ -30021,9 +30026,11 @@ var _reactRouterRedux = __webpack_require__(290);
 
 var _getMovies = __webpack_require__(302);
 
-var rootReducer = (0, _redux.combineReducers)({ requestMovies: _getMovies.requestMovies, receiveMovies: _getMovies.receiveMovies, routing: _reactRouterRedux.routerReducer });
+var _authentication = __webpack_require__(311);
 
 // Import individual reducers
+var rootReducer = (0, _redux.combineReducers)({ requestMovies: _getMovies.requestMovies, receiveMovies: _getMovies.receiveMovies, authentication: _authentication.authentication, routing: _reactRouterRedux.routerReducer });
+
 exports.default = rootReducer;
 
 /***/ }),
@@ -30372,8 +30379,13 @@ exports.movieReceivedFromAPI = movieReceivedFromAPI;
 exports.receiveMovies = receiveMovies;
 exports.receiveSingleMovie = receiveSingleMovie;
 exports.failedToFetch = failedToFetch;
+exports.registerUser = registerUser;
+exports.userIsRegistered = userIsRegistered;
+exports.failedPost = failedPost;
+exports.userFailToRegister = userFailToRegister;
 exports.fetchMovie = fetchMovie;
 exports.fetchSingleMovie = fetchSingleMovie;
+exports.postRegistration = postRegistration;
 // Gets movies from API
 function requestMoviesFromAPI() {
   return {
@@ -30408,6 +30420,34 @@ function receiveSingleMovie(singleMovie) {
 function failedToFetch(err) {
   return {
     type: 'FAILED_TO_FETCH',
+    err: err
+  };
+}
+
+// Create/Register user
+function registerUser() {
+  return {
+    type: 'REGISTER_USER'
+  };
+}
+
+// Succesful rgistration
+function userIsRegistered() {
+  return {
+    type: 'USER_IS_REGISTERED'
+  };
+}
+
+function failedPost(err) {
+  return {
+    type: 'FAILED_POST',
+    err: err
+  };
+}
+
+function userFailToRegister(err) {
+  return {
+    type: 'USER_FAILED_TO_REGISTER',
     err: err
   };
 }
@@ -30460,15 +30500,32 @@ function fetchSingleMovie(singleMovie) {
   };
 }
 
-/*
-title: singleMovie.Title,
-year: singleMovie.Year,
-genre: singleMovie.Genre,
-director: singleMovie.Director,
-country: singleMovie.Country,
-imdbID: singleMovie.imdbID,
-poster: singleMovie.Poster
-*/
+// Function to post user registration data to server
+function postRegistration(userData) {
+
+  return function (dispatch) {
+    dispatch(registerUser());
+
+    return fetch('http://localhost:3000/users/register', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userData)
+    }).then(function (response) {
+      return response.json();
+    }).then(function (data) {
+      if (data.register) {
+        dispatch(userIsRegistered(data));
+      } else {
+        dispatch(userFailToRegister(data.err));
+      }
+    }).catch(function (err) {
+      return dispatch(failedPost(err));
+    });
+  };
+};
 
 /***/ }),
 /* 295 */
@@ -30622,7 +30679,7 @@ exports = module.exports = __webpack_require__(110)();
 
 
 // module
-exports.push([module.i, "ul {\n    list-style-type: none;\n    margin: 0;\n    padding: 20px;\n    overflow: hidden;\n\n}\n\nli {\n    display: inline;\n    padding: 20px 15px;\n    color: #f2f2f2;\n    text-align: center;\n    font-size: 17px;\n}\n\n.Navbar__navbar___3dF-8 {\n  color: red;\n  background-color: red;\n}\n", ""]);
+exports.push([module.i, "ul {\n    list-style-type: none;\n    margin: 0;\n    padding: 20px;\n    overflow: hidden;\n\n}\n\nli {\n    display: inline;\n    padding: 20px 15px;\n    color: #f2f2f2;\n    text-align: center;\n    font-size: 17px;\n}\n\n.Navbar__navbar___3dF-8 {\n  color: #4CAF50;\n  background-color: #4CAF50;\n}\n", ""]);
 
 // exports
 exports.locals = {
@@ -30976,15 +31033,20 @@ var _react = __webpack_require__(7);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _RegisterForm = __webpack_require__(308);
+
+var _RegisterForm2 = _interopRequireDefault(_RegisterForm);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Home = _react2.default.createClass({
-  displayName: "Home",
+  displayName: 'Home',
   render: function render() {
     return _react2.default.createElement(
-      "div",
-      { className: "home" },
-      _react2.default.createElement("img", { src: "../src/assets/film_reel.png" })
+      'div',
+      { className: 'home' },
+      _react2.default.createElement(_RegisterForm2.default, this.props),
+      _react2.default.createElement('img', { src: '../src/assets/film_reel.png' })
     );
   }
 });
@@ -30992,7 +31054,7 @@ var Home = _react2.default.createClass({
 exports.default = Home;
 
 /*
-Now path to image is from index html, b/c image was not loading otherwise  
+Now path to image is from index html, b/c image was not loading otherwise
 */
 
 /***/ }),
@@ -31034,6 +31096,171 @@ exports.push([module.i, "div {\n  border: solid;\n}\n", ""]);
 
 // exports
 
+
+/***/ }),
+/* 308 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(7);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var form = __webpack_require__(309);
+
+var RegisterForm = _react2.default.createClass({
+  displayName: 'RegisterForm',
+
+  post: function post(e) {
+    e.preventDefault();
+    this.props.postRegistration({
+      username: this.refs.username.value,
+      password: this.refs.psw.value
+    });
+  },
+  render: function render() {
+    return _react2.default.createElement(
+      'div',
+      { className: form.register_form_outter_container },
+      _react2.default.createElement(
+        'h2',
+        null,
+        'Register for an Account'
+      ),
+      _react2.default.createElement(
+        'p',
+        null,
+        'With an account you can have a MovieDB profile and contribute to MobieDB by rating your favorites'
+      ),
+      _react2.default.createElement(
+        'form',
+        null,
+        _react2.default.createElement(
+          'div',
+          { className: form.register_form_inner_container },
+          _react2.default.createElement(
+            'label',
+            null,
+            _react2.default.createElement(
+              'b',
+              null,
+              'Username'
+            )
+          ),
+          _react2.default.createElement('input', { type: 'text', placeholder: 'Enter Username', ref: 'username', required: true }),
+          _react2.default.createElement(
+            'label',
+            null,
+            _react2.default.createElement(
+              'b',
+              null,
+              'Password'
+            )
+          ),
+          _react2.default.createElement('input', { type: 'password', placeholder: 'Enter Password', ref: 'psw', required: true }),
+          _react2.default.createElement(
+            'div',
+            { className: form.register_form_button },
+            _react2.default.createElement(
+              'button',
+              { type: 'submit', onClick: this.post },
+              'Create Account'
+            )
+          )
+        )
+      )
+    );
+  }
+});
+
+exports.default = RegisterForm;
+
+/***/ }),
+/* 309 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(310);
+if(typeof content === 'string') content = [[module.i, content, '']];
+// add the styles to the DOM
+var update = __webpack_require__(111)(content, {});
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {
+	// When the styles change, update the <style> tags
+	if(!content.locals) {
+		module.hot.accept("!!../../node_modules/css-loader/index.js?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!./RegisterForm.ncss", function() {
+			var newContent = require("!!../../node_modules/css-loader/index.js?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!./RegisterForm.ncss");
+			if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+			update(newContent);
+		});
+	}
+	// When the module is disposed, remove the <style> tags
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 310 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(110)();
+// imports
+
+
+// module
+exports.push([module.i, "/* Full-width input fields */\ninput[type=text], input[type=password] {\n    width: 80%;\n    padding: 12px 20px;\n    margin: 8px 0;\n    display: block;\n    border: 1px solid #ccc;\n    box-sizing: border-box;\n}\n\n/* Style for button*/\n.RegisterForm__register_form_button___zHCvw {\n    background-color: #4CAF50;\n    color: white;\n    padding: 14px 20px;\n    margin: 8px 0;\n    border: none;\n    cursor: pointer;\n    width: 80%;\n    float: left;\n}\n\n.RegisterForm__register_form_outter_container___3Ex2M {\n    padding: 16px;\n}\n", ""]);
+
+// exports
+exports.locals = {
+	"register_form_button": "RegisterForm__register_form_button___zHCvw",
+	"register_form_outter_container": "RegisterForm__register_form_outter_container___3Ex2M"
+};
+
+/***/ }),
+/* 311 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.authentication = authentication;
+function authentication() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var action = arguments[1];
+
+  switch (action.type) {
+    case 'REGISTER_USER':
+      return Object.assign({}, state, { isPostingToServer: true });
+    case 'USER_IS_REGISTERED':
+      return Object.assign({}, state, { isPostingToServer: false });
+    case 'USER_FAILED_TO_REGISTER':
+      return Object.assign({}, state, {
+        isPostingToServer: false,
+        register: false
+      });
+    case 'FAILED_POST':
+      return Object.assign({}, state, {
+        isPostingToServer: false,
+        error: action.err
+      });
+    default:
+      return state;
+  }
+  return state;
+}
 
 /***/ })
 /******/ ]);

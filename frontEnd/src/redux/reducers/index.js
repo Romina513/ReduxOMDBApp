@@ -3,8 +3,9 @@ import { routerReducer } from 'react-router-redux';
 
 // Import individual reducers
 import { requestMovies, receiveMovies } from './getMovies';
+import { authentication } from './authentication';
 
 
-const rootReducer = combineReducers({requestMovies, receiveMovies, routing: routerReducer});
+const rootReducer = combineReducers({requestMovies, receiveMovies, authentication, routing: routerReducer});
 
 export default rootReducer;

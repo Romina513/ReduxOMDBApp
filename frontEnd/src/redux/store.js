@@ -18,6 +18,11 @@ const InitialState = {
     SingleMovie: {},
     movies: [],
   },
+  authentication: {
+    isPostingToServer: false,
+    register: false,
+    error: null,
+  }
 };
 
 // Note: thunk middleware helps to deal with asynchonizity problem (for fetching)

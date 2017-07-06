@@ -12,11 +12,6 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
-// DON'T THINK I NEED A LOGIN GET
-// router.get('/login', function(req, res) {
-//   res.render('login');
-// });
-
 // ORIGINAL LOGIN POST ROUTE
 // router.post('/login', function(req, res) {
 //   const userData = {
@@ -40,28 +35,19 @@ router.get('/logout', function(req, res) {
 // router.get('/register', function(req, res, next) {
 //   res.send('register');
 // });
-//
-// router.post('/nouse', function(req, res) {
-//   console.log(req.body);
-//   var newUser = new User({ username: req.body.username });
-//   User.register(newUser, req.body.password, function (err, user) {
-//     if(err) {
-//       console.log(err);
-//       return res.send('There was an error in registration');
-//     }
-//     res.send('User created ' + user.username);
-//   });
-// });
+
+// *This is for private session: req.user, req.isAuthenticated = true
+
 
 // url is: '/users/register' because app.js appends /users to all routes in users.js
 router.post('/register', function(req, res, next) {
   user.register(new user({username: req.body.username}), req.body.password, function(err, user) {
     if(err) {
       console.log('Error while user register!', err);
-      res.send(err);
+      res.send({register: false, err: err});
     } else {
       passport.authenticate('local')(req, res, function() {
-        res.send('Succesful registration!');
+        res.send({register: true, err: null});
       })
     }
   });
