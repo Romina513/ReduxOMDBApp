@@ -24,8 +24,16 @@ router.get('/', function(req, res, next) {
 // });
 
 router.post('/login', passport.authenticate('local'), function(req, res) {
-  res.send('You are logged in!');
+  res.send({loggedIn: true});
 });
+
+// app.post('/login', passport.authenticate('local', {
+//   failureRedirect: '/register',
+// }), function(req, res) {
+//   console.log('logeado');
+//   res.send('Estas Logeado');
+// });
+
 
 router.get('/logout', function(req, res) {
   req.logout();
@@ -52,6 +60,7 @@ router.post('/register', function(req, res, next) {
     }
   });
 });
+
 
 
 // router.get('/favorites', isLoggedIn, function(req, res) {

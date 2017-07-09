@@ -21,6 +21,7 @@ const InitialState = {
   authentication: {
     isPostingToServer: false,
     register: false,
+    isLoggedIn: false,
     error: null,
   }
 };

@@ -64,6 +64,18 @@ export function userFailToRegister(err) {
   }
 }
 
+export function logInUser(err) {
+  return {
+    type: 'LOG_IN_USER',
+  }
+}
+
+export function userIsLoggedIn(err) {
+  return {
+    type: 'USER_IS_LOGGED_IN',
+  }
+}
+
 // Function to fetch all movies corresponding to words in search input field
 export function fetchMovie(inputFromSearchField) {
   // Thunk middleware knows how to handle functions.
@@ -126,11 +138,36 @@ export function postRegistration(userData) {
       .then(response => response.json())
       .then(data => {
         if(data.register) {
-          dispatch(userIsRegistered(data))
+          dispatch(userIsRegistered()) // Was like this: dispatch(userIsRegistered(data))
         } else {
           dispatch(userFailToRegister(data.err))
         }
       })
+      .catch(err => dispatch(failedPost(err)))
+  };
+};
+
+
+export function postLogIn(userData) {
+
+  return (dispatch) => {
+    dispatch(logInUser());
+
+    return fetch('http://localhost:3000/users/login', {
+      method: 'POST',
+      headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+      body: JSON.stringify(userData)
+    })
+      // .then(response => {
+      //   if(response.status == 401) {
+      //     console.log('Error in log in');
+      //   }
+      // })
+      .then(response => response.json())
+      .then(data => dispatch(userIsLoggedIn()))
       .catch(err => dispatch(failedPost(err)))
   };
 };

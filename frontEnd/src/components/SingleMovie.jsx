@@ -2,6 +2,7 @@ import React from 'react';
 
 
 const SingleMovie = React.createClass({
+
   render() {
     return (
       <div className="single-movie">
@@ -14,6 +15,14 @@ const SingleMovie = React.createClass({
 export default SingleMovie;
 
 /*
+
+var movieId = this.props.movie.imdbID;
+compenentWillMount() {
+  this.props.fetchSingleMovie(movieId) {
+
+  }
+}
+
 title: singleMovie.Title,
 year: singleMovie.Year,
 genre: singleMovie.Genre,

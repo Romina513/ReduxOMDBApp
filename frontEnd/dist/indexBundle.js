@@ -29959,6 +29959,7 @@ var InitialState = {
   authentication: {
     isPostingToServer: false,
     register: false,
+    isLoggedIn: false,
     error: null
   }
 };
@@ -30383,9 +30384,12 @@ exports.registerUser = registerUser;
 exports.userIsRegistered = userIsRegistered;
 exports.failedPost = failedPost;
 exports.userFailToRegister = userFailToRegister;
+exports.logInUser = logInUser;
+exports.userIsLoggedIn = userIsLoggedIn;
 exports.fetchMovie = fetchMovie;
 exports.fetchSingleMovie = fetchSingleMovie;
 exports.postRegistration = postRegistration;
+exports.postLogIn = postLogIn;
 // Gets movies from API
 function requestMoviesFromAPI() {
   return {
@@ -30449,6 +30453,18 @@ function userFailToRegister(err) {
   return {
     type: 'USER_FAILED_TO_REGISTER',
     err: err
+  };
+}
+
+function logInUser(err) {
+  return {
+    type: 'LOG_IN_USER'
+  };
+}
+
+function userIsLoggedIn(err) {
+  return {
+    type: 'USER_IS_LOGGED_IN'
   };
 }
 
@@ -30517,10 +30533,38 @@ function postRegistration(userData) {
       return response.json();
     }).then(function (data) {
       if (data.register) {
-        dispatch(userIsRegistered(data));
+        dispatch(userIsRegistered()); // Was like this: dispatch(userIsRegistered(data))
       } else {
         dispatch(userFailToRegister(data.err));
       }
+    }).catch(function (err) {
+      return dispatch(failedPost(err));
+    });
+  };
+};
+
+function postLogIn(userData) {
+
+  return function (dispatch) {
+    dispatch(logInUser());
+
+    return fetch('http://localhost:3000/users/login', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userData)
+    })
+    // .then(response => {
+    //   if(response.status == 401) {
+    //     console.log('Error in log in');
+    //   }
+    // })
+    .then(function (response) {
+      return response.json();
+    }).then(function (data) {
+      return dispatch(userIsLoggedIn());
     }).catch(function (err) {
       return dispatch(failedPost(err));
     });
@@ -30552,6 +30596,10 @@ var _Search = __webpack_require__(303);
 
 var _Search2 = _interopRequireDefault(_Search);
 
+var _LogInOut = __webpack_require__(312);
+
+var _LogInOut2 = _interopRequireDefault(_LogInOut);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Main = _react2.default.createClass({
@@ -30562,6 +30610,7 @@ var Main = _react2.default.createClass({
       null,
       _react2.default.createElement(_Navbar2.default, null),
       _react2.default.createElement(_Search2.default, this.props),
+      _react2.default.createElement(_LogInOut2.default, this.props),
       _react2.default.cloneElement(this.props.children, this.props)
     );
   }
@@ -30817,6 +30866,14 @@ var SingleMovie = _react2.default.createClass({
 exports.default = SingleMovie;
 
 /*
+
+var movieId = this.props.movie.imdbID;
+compenentWillMount() {
+  this.props.fetchSingleMovie(movieId) {
+
+  }
+}
+
 title: singleMovie.Title,
 year: singleMovie.Year,
 genre: singleMovie.Genre,
@@ -31046,7 +31103,7 @@ var Home = _react2.default.createClass({
       'div',
       { className: 'home' },
       _react2.default.createElement(_RegisterForm2.default, this.props),
-      _react2.default.createElement('img', { src: '../src/assets/film_reel.png' })
+      _react2.default.createElement('img', { src: '../assets/film_reel.png' })
     );
   }
 });
@@ -31055,6 +31112,7 @@ exports.default = Home;
 
 /*
 Now path to image is from index html, b/c image was not loading otherwise
+../src/assets/film_reel.png
 */
 
 /***/ }),
@@ -31251,6 +31309,13 @@ function authentication() {
         isPostingToServer: false,
         register: false
       });
+    case 'LOG_IN_USER':
+      return Object.assign({}, state, { isPostingToServer: true });
+    case 'USER_IS_LOGGED_IN':
+      return Object.assign({}, state, {
+        isPostingToServer: false,
+        isLoggedIn: true
+      });
     case 'FAILED_POST':
       return Object.assign({}, state, {
         isPostingToServer: false,
@@ -31261,6 +31326,60 @@ function authentication() {
   }
   return state;
 }
+
+/***/ }),
+/* 312 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(7);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var form = __webpack_require__(309);
+
+var LogInOut = _react2.default.createClass({
+  displayName: 'LogInOut',
+
+  post: function post(e) {
+    e.preventDefault();
+    this.props.postLogIn({
+      username: this.refs.username.value,
+      password: this.refs.psw.value
+    });
+  },
+  render: function render() {
+    return _react2.default.createElement(
+      'div',
+      { className: form.log_in_out_container },
+      _react2.default.createElement(
+        'form',
+        null,
+        _react2.default.createElement('input', { type: 'text', placeholder: 'Enter Username', ref: 'username', required: true }),
+        _react2.default.createElement('input', { type: 'password', placeholder: 'Enter Password', ref: 'psw', required: true }),
+        _react2.default.createElement(
+          'div',
+          { className: form.register_form_button },
+          _react2.default.createElement(
+            'button',
+            { type: 'submit', onClick: this.post },
+            'Log In'
+          )
+        )
+      )
+    );
+  }
+});
+
+exports.default = LogInOut;
 
 /***/ })
 /******/ ]);
