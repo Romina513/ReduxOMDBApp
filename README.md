@@ -1,4 +1,7 @@
-How to deploy / instructions to get project running go here
+How to deploy / instructions to get project running:
+
+Dependencies I already had installed globally that will be needed:
+express (if using express generator, it will be installed for you), webpack, mongoose
 
 ===Front End===
 
@@ -7,6 +10,7 @@ $ npm install babel-core babel-loader babel-preset-es2015 babel-preset-react --s
 $ npm install react react-dom --save
 
 $ npm install react-redux redux react-router react-router-redux --save
+(* Note: Used react-router version 3.0.5. The latest version is 4.1.1, so that will be what downloads. There might be significant enough changes that the code here will not be compatible with latest version)
 
 $ npm install css-loader style-loader --save
 
@@ -49,7 +53,7 @@ $ npm install passport passport-local --save
 $ npm install passport-local-mongoose --save
 
 
-===Mongoose/Mongo===
+===Mongoose/Mongo Database===
 
 Mongoose/Mongo
 
@@ -94,3 +98,26 @@ $ simplehttpserver .    <-- (. all at this directory)
 [directory] is used as web root and is by default current working directory
 
 Server listens port 8000. Navigate to http://localhost:8000 to view
+
+=========
+# base image
+FROM node:alpine
+
+# run this directory. Here a directory will be made in your docker container
+RUN mkdir app
+
+# Woking directory
+WORKDIR app
+
+# adding these to directory app in my container
+ADD ./bin/www www
+# first is reference to path in my files, second is what the file will be called in container
+ADD ./package.json package.json
+
+# will install all dependencies
+RUN npm install
+
+ADD .backEnd/app.js app.js
+
+# the port number the container should expose
+EXPOSE 3000
