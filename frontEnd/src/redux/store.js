@@ -15,7 +15,7 @@ const InitialState = {
     error: null
   },
   receiveMovies: {
-    SingleMovie: {},
+    singleMovie: {},
     movies: [],
   },
   authentication: {

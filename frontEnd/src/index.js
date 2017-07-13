@@ -12,7 +12,7 @@ import store, { history } from './redux/store'
 import App from './components/App';
 import Home from './components/Home.jsx';
 import MovieGrid from './components/MovieGrid.jsx';
-import SingleMovie from './components/SingleMovie.jsx';
+import Single from './containers/Single.jsx';
 // *Note: Need .jsx extension, because the default is .js, so it will look for .js files, not .jsx by default
 
 
@@ -22,7 +22,7 @@ const router = (
       <Route path="/" component={App}>
         <IndexRoute component={Home}></IndexRoute>
         <Route path="/searchresults" component={MovieGrid}></Route>
-        <Route path="/view/:postId" component={SingleMovie}></Route>
+        <Route path="/view/:postId" component={Single}></Route>
       </Route>
     </Router>
   </Provider>

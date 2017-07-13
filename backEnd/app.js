@@ -14,7 +14,7 @@ var User = require('./models/users');
 
 // Connect to mongoose db
 // Changed for //localhost/movieDatabase to //mongo/movieDatabase, because with Docker using image called mongo
-mongoose.connect('mongodb://mongo/movieDatabase');
+mongoose.connect('mongodb://localhost/movieDatabase');
 
 var index = require('./routes/index');
 var users = require('./routes/users');

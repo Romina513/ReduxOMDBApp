@@ -1,0 +1,19 @@
+.movie_thumbnail {
+  border: .75px solid rgb(191, 191, 191);
+	float: left;
+  width: 26%;
+	margin:  2% 2% 50px 2%;
+}
+
+.inner_div {
+  text-align: center;
+}
+
+.a {
+  text-decoration: none;
+  color: rgb(51, 51, 51);
+}
+
+.a:hover {
+  color: rgb(51, 153, 51);
+}

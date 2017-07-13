@@ -9,7 +9,7 @@ function mapStateToProps(state) {
     isFetching: state.requestMovies.isFetching,
     error: state.requestMovies.error,
     movies: state.receiveMovies.movies,
-    SingleMovie: state.receiveMovies.SingleMovie
+    singleMovie: state.receiveMovies.singleMovie
   }
 };
 

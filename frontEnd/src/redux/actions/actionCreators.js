@@ -24,7 +24,7 @@ export function receiveMovies(moviesArray) {
 export function receiveSingleMovie(singleMovie) {
   return {
     type: 'RECEIVE_SINGLE_MOVIE',
-    singleMovie
+    singleMovie: singleMovie,
   };
 }
 
@@ -111,7 +111,7 @@ export function fetchSingleMovie(singleMovie) {
   return (dispatch) => {
     dispatch(requestMoviesFromAPI());
 
-    return fetch(`http://omdbapi.com/?apikey=20dac387&t=${singleMovie}`)
+    return fetch(`http://omdbapi.com/?apikey=20dac387&i=${singleMovie}`)
       .then(response => response.json())
       .then(data => {
         dispatch(receiveSingleMovie(data));

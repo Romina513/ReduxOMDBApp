@@ -2,11 +2,15 @@ import React from 'react';
 
 
 const SingleMovie = React.createClass({
-
   render() {
     return (
       <div className="single-movie">
-        I am the Single Movie component
+        <img src={this.props.movieProp.Poster} />
+        <h2>{this.props.movieProp.Title}</h2>
+        <p>Year: {this.props.movieProp.Year}</p>
+        <p>Genre: {this.props.movieProp.Genre}</p>
+        <p>Director: {this.props.movieProp.Director}</p>
+        <p>Country: {this.props.movieProp.Country}</p>
       </div>
     )
   }
@@ -15,9 +19,9 @@ const SingleMovie = React.createClass({
 export default SingleMovie;
 
 /*
-
+ref={this.props.movie.imdbID}
 var movieId = this.props.movie.imdbID;
-compenentWillMount() {
+componentWillMount() {
   this.props.fetchSingleMovie(movieId) {
 
   }
