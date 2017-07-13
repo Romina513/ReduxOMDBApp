@@ -122,12 +122,15 @@ export function fetchSingleMovie(singleMovie) {
 }
 
 // Function to post user registration data to server
+// Changed fetch function routes to relative routes: '.api/users/register'
+// Instead of absolute routes: http//localhost:3001/users/register
+// nginx default rewrite takes care of taking out api, so that I don't have to write api on back end routes
 export function postRegistration(userData) {
 
   return (dispatch) => {
     dispatch(registerUser());
 
-    return fetch('http://localhost:3000/users/register', {
+    return fetch('./api/users/register', {
       method: 'POST',
       headers: {
 				'Accept': 'application/json',
@@ -153,7 +156,7 @@ export function postLogIn(userData) {
   return (dispatch) => {
     dispatch(logInUser());
 
-    return fetch('http://localhost:3000/users/login', {
+    return fetch('./api/users/login', {
       method: 'POST',
       headers: {
 				'Accept': 'application/json',

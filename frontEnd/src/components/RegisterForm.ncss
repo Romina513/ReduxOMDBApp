@@ -21,5 +21,6 @@ input[type=text], input[type=password] {
 }
 
 .register_form_outter_container {
-    padding: 16px;
+    padding: 20px;
+    display: inline-block;
 }

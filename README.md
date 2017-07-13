@@ -65,27 +65,28 @@ from your code (This will probably be in routes (such as index.js or users) or a
 * mongodb and mongo should be up for this to work
 (Open with Terminal)
 
-> Show dbs
+$> Show dbs
 (Will list all your databases. Check that yours was created)
 
-> use nameOfDatabaseYouWantToUse
+$> use nameOfDatabaseYouWantToUse
 
 To create a collection within your database (if needed):
 
-> db.createCollection(name, [options])
+$> db.createCollection(name, [options])
 
-> show collections
+$> show collections
 (Show collections you have)
 
 Useful commands:
 
-> db.nameOfCollection.find({})
+$> db.nameOfCollection.find({})
 (Show all items in a collection)
 
-> db.nameOfCollection.remove({condition})
+$> db.nameOfCollection.remove({condition})
 
 
 ===Server for Testing===
+
 https://www.npmjs.com/package/simplehttpserver
 
 In Terminal @ backEnd directory: (Could this have gone in frontEnd directory? Same difference?)

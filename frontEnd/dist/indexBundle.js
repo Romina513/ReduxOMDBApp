@@ -30698,12 +30698,15 @@ function fetchSingleMovie(singleMovie) {
 }
 
 // Function to post user registration data to server
+// Changed fetch function routes to relative routes: '.api/users/register'
+// Instead of absolute routes: http//localhost:3001/users/register
+// nginx default rewrite takes care of taking out api, so that I don't have to write api on back end routes
 function postRegistration(userData) {
 
   return function (dispatch) {
     dispatch(registerUser());
 
-    return fetch('http://localhost:3000/users/register', {
+    return fetch('./api/users/register', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -30729,7 +30732,7 @@ function postLogIn(userData) {
   return function (dispatch) {
     dispatch(logInUser());
 
-    return fetch('http://localhost:3000/users/login', {
+    return fetch('./api/users/login', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -31157,7 +31160,7 @@ exports = module.exports = __webpack_require__(44)();
 
 
 // module
-exports.push([module.i, "/* Full-width input fields */\ninput[type=text], input[type=password] {\n    width: 80%;\n    padding: 12px 20px;\n    margin: 8px 0;\n    display: block;\n    border: 1px solid #ccc;\n    box-sizing: border-box;\n}\n\n/* Style for button*/\n.RegisterForm__register_form_button___zHCvw {\n    background-color: #4CAF50;\n    color: white;\n    padding: 14px 20px;\n    margin: 8px 0;\n    border: none;\n    cursor: pointer;\n    width: 80%;\n    float: left;\n}\n\n.RegisterForm__register_form_outter_container___3Ex2M {\n    padding: 16px;\n}\n", ""]);
+exports.push([module.i, "/* Full-width input fields */\ninput[type=text], input[type=password] {\n    width: 80%;\n    padding: 12px 20px;\n    margin: 8px 0;\n    display: block;\n    border: 1px solid #ccc;\n    box-sizing: border-box;\n}\n\n/* Style for button*/\n.RegisterForm__register_form_button___zHCvw {\n    background-color: #4CAF50;\n    color: white;\n    padding: 14px 20px;\n    margin: 8px 0;\n    border: none;\n    cursor: pointer;\n    width: 80%;\n    float: left;\n}\n\n.RegisterForm__register_form_outter_container___3Ex2M {\n    padding: 20px;\n    display: inline-block;\n}\n", ""]);
 
 // exports
 exports.locals = {
