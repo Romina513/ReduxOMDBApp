@@ -16,6 +16,11 @@ export function authentication (state={}, action) {
         isPostingToServer: false,
         isLoggedIn: true,
       });
+    case 'USER_FAILED_TO_LOG_IN':
+      return Object.assign({}, state, {
+        isPostingToServer: false,
+        isLoggedIn: false
+      });
     case 'FAILED_POST':
       return Object.assign({}, state, {
         isPostingToServer: false,

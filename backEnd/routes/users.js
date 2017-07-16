@@ -44,8 +44,6 @@ router.get('/logout', function(req, res) {
 //   res.send('register');
 // });
 
-// *This is for private session: req.user, req.isAuthenticated = true
-
 
 // url is: '/users/register' because app.js appends /users to all routes in users.js
 router.post('/register', function(req, res, next) {
@@ -61,11 +59,17 @@ router.post('/register', function(req, res, next) {
   });
 });
 
+function isLoggedIn(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  return res.send('<img src="https://i.ytimg.com/vi/qdYifXP5tVA/maxresdefault.jpg"/>');
+}
 
-
-// router.get('/favorites', isLoggedIn, function(req, res) {
-//   res.render('favorites');
-// });
+router.get('/favorites', isLoggedIn, function(req, res) {
+  res.render('favorites');
+});
+// *This is for private session: req.user, req.isAuthenticated = true
 
 
 module.exports = router;

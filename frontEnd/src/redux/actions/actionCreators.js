@@ -76,6 +76,12 @@ export function userIsLoggedIn(err) {
   }
 }
 
+export function userFailedToLogin() {
+  return {
+    type: 'USER_FAILED_TO_LOG_IN',
+  }
+}
+
 // Function to fetch all movies corresponding to words in search input field
 export function fetchMovie(inputFromSearchField) {
   // Thunk middleware knows how to handle functions.
@@ -169,6 +175,16 @@ export function postLogIn(userData) {
       //     console.log('Error in log in');
       //   }
       // })
+      .then(response => {
+        return new Promise(function(resolve, reject) {
+          if(response.status == 401) {
+            dispatch(userFailedToLogin())
+              reject();
+          } else {
+            resolve(response);
+          }
+        });
+      })
       .then(response => response.json())
       .then(data => dispatch(userIsLoggedIn()))
       .catch(err => dispatch(failedPost(err)))
